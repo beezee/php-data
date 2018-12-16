@@ -6,6 +6,7 @@ namespace Data;
 
 use Widmogrod as W;
 use Widmogrod\Functional as wf;
+use Widmogrod\Monad\Either as Either;
 use Widmogrod\Monad\Maybe as Maybe;
 
 class Data {
@@ -61,4 +62,15 @@ class Data {
       new \Exception("${m} is not a valid constructor"));
     return new static($m, array_replace_recursive([], $a[0], $c($a[0])));
   }
+
+  function __toString() {
+    $class = get_class($this);
+    $self = $this;
+    $d = Either\tryCatch(function() use ($self) {
+          return json_encode($this->_d);
+        }, wf\constt(print_r($this->_d, true)), null)
+      ->either(wf\identity, wf\identity);
+    return "{$class}::{$this->_k}({$d})";
+  }
+    
 }
