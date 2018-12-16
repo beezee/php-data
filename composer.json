@@ -1,0 +1,24 @@
+{
+    "name": "beezee/php-data",
+    "description": "Algebraic data types with optics",
+    "type": "library",
+    "require-dev": {
+        "phpstan/phpstan": "^0.10.6",
+        "giorgiosironi/eris": "^0.11.0",
+        "phpunit/phpunit": "^7.5"
+    },
+    "license": "GPL",
+    "autoload": {
+      "files": [
+        "src/util.php"
+      ],
+      "psr-4": {
+        "Data\\": "src/",
+        "Data\\Test\\": "test/"
+      }
+    },
+    "require": {
+        "widmogrod/php-functional": "^5.1",
+        "lstrojny/functional-php": "^1.9"
+    }
+}
