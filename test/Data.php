@@ -9,8 +9,9 @@ use Functional as f;
 class TL extends d\Data {
   protected static function constructors() {
     return array_reduce(['Red', 'Green', 'Yellow'],
-      function($a, $e) { return array_merge($a,
-        [$e => function() { return []; }]); }, []);
+      function($a, $e) { 
+        return array_merge($a, [$e => f\const_function([])]);
+      }, []);
   }
 }
 
