@@ -4,13 +4,14 @@ namespace Data\Test;
 
 use Data as d;
 use Eris\Generator;
-use Functional as f;
+use Widmogrod\Functional as wf;
+use Widmogrod\Monad\Either as Either;
 
 class TL extends d\Data {
   protected static function constructors() {
     return array_reduce(['Red', 'Green', 'Yellow'],
       function($a, $e) { 
-        return array_merge($a, [$e => f\const_function([])]);
+        return array_merge($a, [$e => wf\constt([])]);
       }, []);
   }
 }
@@ -25,9 +26,9 @@ class TrafficLightTest extends \PHPUnit\Framework\TestCase
 
     function toInt() {
       return [
-        'Red' => f\const_function(0),
-        'Green' => f\const_function(1),
-        'Yellow' => f\const_function(2)
+        'Red' => wf\constt(0),
+        'Green' => wf\constt(1),
+        'Yellow' => wf\constt(2)
       ];
     }
 
@@ -53,6 +54,13 @@ class TrafficLightTest extends \PHPUnit\Framework\TestCase
                 // folding
                 ($c1 == $self->fromInt($tl1->fold($self->toInt()))) &&
                 ($c2 == $self->fromInt($tl2->fold($self->toInt()))) &&
+                // exhaustivity on fold
+                (Either\tryCatch(function() use ($tl1, $self) {
+                      $tl1->fold(array_merge($self->toInt(), 
+                        ['Red' => null, 'Green' => null]));
+                    })(wf\invoke('getMessage'), null)
+                  ->either(wf\identity, wf\constt("")) ==
+                  "No handler for Red, Green provided") &&
                 // construction
                 ((($c1 == $c2) && ($tl1 == $tl2)) ||
                 (($c1 != $c2) && ($tl1 != $tl2)))

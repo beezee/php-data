@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Data;
 
-use Functional as f;
 use Widmogrod as W;
+use Widmogrod\Functional as wf;
 use Widmogrod\Monad\Maybe as Maybe;
 
 class Data {
@@ -20,7 +20,7 @@ class Data {
 
   protected static function constructors() {
     return [
-      'new' => f\const_function([])
+      'new' => wf\constt([])
     ];
   }
 
@@ -30,12 +30,24 @@ class Data {
 
   function fold($fns) {
     $self = $this;
-    return getOrThrow(
-      filterMaybe(
-        f\curry_n(1, 'is_callable'), 
-        getIfSet($this->_k, $fns))->map(
-          function($f) use ($self) { return $f($self->_d); }),
-      new \Exception("No handler for {$this->_k} provided"));
+    list($errs, $fn) = array_reduce(array_keys(static::constructors()),
+      function($a, $e) use ($fns, $self) {
+        return filterMaybe(
+          wf\curryN(1, 'is_callable'), 
+          getIfSet($e, $fns))->map(
+            function($f) use ($self, $e, $a) { 
+              return ($e == $self->_k)
+                ? [$a[0], $f] : $a;
+             })->extract() ?: [wf\push_($a[0], [$e]), $a[1]];
+        }, [[], null]);
+      $err = (count($errs) == 0)
+        ? $this->_k : implode(", ", $errs);
+      return getOrThrow(filterMaybe(
+        wf\constt(count($errs) == 0),
+        Maybe\maybeNull($fn))->map(function ($f) use ($self) {
+          return $f($self->_d);
+        }),
+        new \Exception("No handler for {$err} provided"));
   }
 
   function at($k) {
@@ -47,6 +59,6 @@ class Data {
   static function __callStatic($m, $a) {
     $c = getOrThrow(getIfSet($m, static::constructors()), 
       new \Exception("${m} is not a valid constructor"));
-    return new self($m, array_replace_recursive([], $a[0], $c($a[0])));
+    return new static($m, array_replace_recursive([], $a[0], $c($a[0])));
   }
 }

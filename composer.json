@@ -18,7 +18,6 @@
       }
     },
     "require": {
-        "widmogrod/php-functional": "^5.1",
-        "lstrojny/functional-php": "^1.9"
+        "widmogrod/php-functional": "^5.1"
     }
 }
