@@ -47,6 +47,6 @@ class Data {
   static function __callStatic($m, $a) {
     $c = getOrThrow(getIfSet($m, static::constructors()), 
       new \Exception("${m} is not a valid constructor"));
-    return new self($m, array_replace_recursive([], $a[0], $c()));
+    return new self($m, array_replace_recursive([], $a[0], $c($a[0])));
   }
 }
