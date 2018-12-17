@@ -26,7 +26,9 @@ class Data {
   }
 
   function __get($m) {
-    return $this->_d[$m];
+    return getOrThrow(
+      getIfSet($m, $this->_d),
+      new \Exception("Property $m is not defined"));
   }
 
   function fold($fns) {
@@ -55,6 +57,32 @@ class Data {
     return ($k == $this->_k)
       ? Maybe\pure($this->_d)
       : Maybe\nothing();
+  }
+
+  function copy($d) {
+    return static::__callStatic($this->_k, 
+      [array_replace_recursive([], $this->_d, $d)]);
+  }
+
+  function lens(array $path) {
+    return array_reduce($path, function($a, $e) { 
+      return is_a($a, 'Data\Data') ?  
+        $a->$e : 
+        getOrThrow(
+          getIfSet($e, $a),
+          new \Exception("Property $e is not defined"));
+    }, $this->_d);
+  }
+
+  // TODO - fix so nested Data instances are preserved
+  function set(array $path, $v) {
+    return $this->copy(array_reduce(array_reverse($path),
+      function($a, $e) { return [$e => $a]; },
+      $v));
+  }
+
+  function modify(array $path, callable $f) {
+    return $this->set($path, $f($this->lens($path)));
   }
 
   static function __callStatic($m, $a) {
