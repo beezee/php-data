@@ -65,7 +65,7 @@ class Data {
       [array_replace_recursive([], $this->_d, $d)]);
   }
 
-  function lens(array $path) {
+  function view(array $path) {
     return array_reduce($path, function($a, $e) { 
       return is_a($a, 'Data\Data') ?  
         $a->$e : 
@@ -101,7 +101,7 @@ class Data {
   }
 
   function modify(array $path, callable $f) {
-    return $this->set($path, $f($this->lens($path)));
+    return $this->set($path, $f($this->view($path)));
   }
 
   static function __callStatic($m, $a) {
