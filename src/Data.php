@@ -10,7 +10,7 @@ use Widmogrod\Monad\Either as Either;
 use Widmogrod\Monad\Maybe as Maybe;
 use Widmogrod\Monad\Identity as Id;
 
-class Data {
+class Data implements \JsonSerializable {
 
   private $_k;
   private $_d;
@@ -110,14 +110,17 @@ class Data {
     return new static($m, array_replace_recursive([], $a[0], $c($a[0])));
   }
 
+  function jsonSerialize() {
+    $class = get_class($this);
+    return ["{$class}::{$this->_k}" => $this->_d];
+  }
+
   function __toString() {
     $class = get_class($this);
-    $self = $this;
-    $d = Either\tryCatch(function() use ($self) {
-          return json_encode($this->_d);
-        }, wf\constt(print_r($this->_d, true)), null)
+    return Either\tryCatch(function() {
+          return json_encode($this);
+        }, wf\constt("${class}::{$this->_k}\n" . print_r($this->_d, true)), null)
       ->either(wf\identity, wf\identity);
-    return "{$class}::{$this->_k}({$d})";
   }
     
 }
