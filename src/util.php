@@ -23,3 +23,14 @@ function filterMaybe(callable $p, Maybe\Maybe $m): Maybe\Maybe {
      return $p($v) ? Maybe\just($v) : Maybe\nothing();
    });
 }
+
+function tail(array $a): array {
+  $r = $a;
+  array_shift($r);
+  return $r;
+}
+
+function last(array $a) {
+  $r = $a;
+  return array_pop($r);
+}

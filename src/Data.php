@@ -8,6 +8,7 @@ use Widmogrod as W;
 use Widmogrod\Functional as wf;
 use Widmogrod\Monad\Either as Either;
 use Widmogrod\Monad\Maybe as Maybe;
+use Widmogrod\Monad\Identity as Id;
 
 class Data {
 
@@ -21,7 +22,7 @@ class Data {
 
   protected static function constructors() {
     return [
-      'new' => wf\constt([])
+      'Data' => wf\constt([])
     ];
   }
 
@@ -74,11 +75,29 @@ class Data {
     }, $this->_d);
   }
 
-  // TODO - fix so nested Data instances are preserved
   function set(array $path, $v) {
-    return $this->copy(array_reduce(array_reverse($path),
-      function($a, $e) { return [$e => $a]; },
-      $v));
+    // a: ([(Data, [path])], (Data, [path]), Data|{path:...})
+    // (acc, curr, focus) = ([], ($this, [$path[0]]), $this->$path[0])
+    // spath: [(Data, [path])]
+    $spath = Id::of(array_reduce(tail($path), function($a, $e) {
+      return is_a($a[2], '\Data\Data')
+        ? [wf\push_($a[0], [$a[1]]), [$a[2], [$e]], $a[2]->$e]
+        : [$a[0], [$a[1][0], wf\push_($a[1][1], [$e])], 
+            getOrThrow(
+              getIfSet($e, $a),
+              new \Exception("Property $e is not defined"))];
+    }, [[], [$this, [$path[0]]], $this->{$path[0]}]))
+      ->map(function($a) { return wf\push_($a[0], [$a[1]]); })
+      ->map('array_reverse')
+      ->extract();
+    $mkArr = function(array $keys, $v) {
+      return array_reduce(array_reverse($keys), function($a, $e) {
+        return [$e => $a];
+      }, $v);
+    };
+    return array_reduce($spath,
+      function($a, $e) use($mkArr) { return $e[0]->copy($mkArr($e[1], $a)); },
+      $v);
   }
 
   function modify(array $path, callable $f) {
