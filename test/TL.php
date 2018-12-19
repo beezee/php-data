@@ -10,7 +10,7 @@ use Widmogrod\Monad\Either as Either;
 class TL extends d\Data {
   protected static function constructors() {
     return array_reduce(['Red', 'Green', 'Yellow'],
-      function($a, $e) { 
+      function($a, $e) {
         return array_merge($a, [$e => wf\identity]);
       }, []);
   }
