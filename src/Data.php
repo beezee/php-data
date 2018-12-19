@@ -22,7 +22,7 @@ class Data implements \JsonSerializable {
 
   protected static function constructors() {
     return [
-      'Data' => wf\constt([])
+      'Data' => wf\identity
     ];
   }
 
