@@ -57,7 +57,7 @@ class Data implements \JsonSerializable {
       return getOrThrow(filterMaybe(
         wf\constt(count($errs) == 0),
         Maybe\maybeNull($fn))->map(function ($f) use ($self) {
-          return $f($self->_d);
+          return $f($self);
         }),
         new \Exception("No handler for {$err} provided"));
   }
