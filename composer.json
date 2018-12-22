@@ -7,7 +7,7 @@
         "giorgiosironi/eris": "^0.11.0",
         "phpunit/phpunit": "^7.5"
     },
-    "license": "GPL",
+    "license": "GPL-3.0-or-later",
     "autoload": {
       "files": [
         "src/util.php"
