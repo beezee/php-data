@@ -62,6 +62,10 @@ class Data implements \JsonSerializable {
         new \Exception("No handler for {$err} provided"));
   }
 
+  function index() {
+    return $this->_k;
+  }
+
   function at($k) {
     return ($k == $this->_k)
       ? Maybe\pure($this->_d)
