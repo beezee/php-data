@@ -59,6 +59,8 @@ repl{ $toString($t); }
 repl{ $t->lens()->view(['r', 'l'])->value; }
 repl{ $toString($t->lens()->set(['r', 'r', 'l', 'value'], 5)); }
 repl{ $toString($t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; })); }
+repl{ $t->prism()->view(['r', 'l']); }
+repl{ $t->prism()->view(['r', 'l', 'l']); }
 phuph```
 
 More to come...

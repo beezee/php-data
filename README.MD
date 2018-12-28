@@ -189,6 +189,26 @@ php>  $toString($t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { retu
         }
     }
 } */
+php>  $t->prism()->view(['r', 'l']); 
+/* Widmogrod\Monad\Maybe\Just Object
+(
+    [value:protected] => Tree Object
+        (
+            [_k:Data\Data:private] => Leaf
+            [_d:Data\Data:private] => Array
+                (
+                    [value] => 2
+                )
+
+        )
+
+)
+ */
+php>  $t->prism()->view(['r', 'l', 'l']); 
+/* Widmogrod\Monad\Maybe\Nothing Object
+(
+)
+ */
 ```
 
 More to come...
