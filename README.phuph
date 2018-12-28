@@ -53,10 +53,12 @@ $t = Tree::Branch(
         'r' => Tree::Leaf(['value' => 4])])
     ])]);
 
-repl{ (string)$t; }
+$toString = function($a) { return json_encode($a, JSON_PRETTY_PRINT); };
+
+repl{ $toString($t); }
 repl{ $t->lens()->view(['r', 'l'])->value; }
-repl{ (string)$t->lens()->set(['r', 'r', 'l', 'value'], 5); }
-repl{ (string)$t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; }); }
+repl{ $toString($t->lens()->set(['r', 'r', 'l', 'value'], 5)); }
+repl{ $toString($t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; })); }
 phuph```
 
-OK all set
+More to come...

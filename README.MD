@@ -86,14 +86,109 @@ $t = Tree::Branch(
         'r' => Tree::Leaf(['value' => 4])])
     ])]);
 
-php>  (string)$t; 
-/* {"Tree::Branch":{"l":{"Tree::Leaf":{"value":1}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":2}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":3}},"r":{"Tree::Leaf":{"value":4}}}}}}}} */
+$toString = function($a) { return json_encode($a, JSON_PRETTY_PRINT); };
+
+php>  $toString($t); 
+/* {
+    "Tree::Branch": {
+        "l": {
+            "Tree::Leaf": {
+                "value": 1
+            }
+        },
+        "r": {
+            "Tree::Branch": {
+                "l": {
+                    "Tree::Leaf": {
+                        "value": 2
+                    }
+                },
+                "r": {
+                    "Tree::Branch": {
+                        "l": {
+                            "Tree::Leaf": {
+                                "value": 3
+                            }
+                        },
+                        "r": {
+                            "Tree::Leaf": {
+                                "value": 4
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} */
 php>  $t->lens()->view(['r', 'l'])->value; 
 /* 2 */
-php>  (string)$t->lens()->set(['r', 'r', 'l', 'value'], 5); 
-/* {"Tree::Branch":{"l":{"Tree::Leaf":{"value":1}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":2}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":5}},"r":{"Tree::Leaf":{"value":4}}}}}}}} */
-php>  (string)$t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; }); 
-/* {"Tree::Branch":{"l":{"Tree::Leaf":{"value":1}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":2}},"r":{"Tree::Branch":{"l":{"Tree::Leaf":{"value":3}},"r":{"Tree::Leaf":{"value":7}}}}}}}} */
+php>  $toString($t->lens()->set(['r', 'r', 'l', 'value'], 5)); 
+/* {
+    "Tree::Branch": {
+        "l": {
+            "Tree::Leaf": {
+                "value": 1
+            }
+        },
+        "r": {
+            "Tree::Branch": {
+                "l": {
+                    "Tree::Leaf": {
+                        "value": 2
+                    }
+                },
+                "r": {
+                    "Tree::Branch": {
+                        "l": {
+                            "Tree::Leaf": {
+                                "value": 5
+                            }
+                        },
+                        "r": {
+                            "Tree::Leaf": {
+                                "value": 4
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} */
+php>  $toString($t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; })); 
+/* {
+    "Tree::Branch": {
+        "l": {
+            "Tree::Leaf": {
+                "value": 1
+            }
+        },
+        "r": {
+            "Tree::Branch": {
+                "l": {
+                    "Tree::Leaf": {
+                        "value": 2
+                    }
+                },
+                "r": {
+                    "Tree::Branch": {
+                        "l": {
+                            "Tree::Leaf": {
+                                "value": 3
+                            }
+                        },
+                        "r": {
+                            "Tree::Leaf": {
+                                "value": 7
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} */
 ```
 
-OK all set
+More to come...
