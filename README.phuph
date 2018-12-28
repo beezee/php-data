@@ -1,0 +1,62 @@
+# php-data
+
+API and underlying representation is still experimental.
+
+This library defines Algebraic Data Types for PHP, 
+with lenses and prisms for free.
+
+
+```phuph
+require('./vendor/autoload.php');
+
+class Pet extends Data\Data {
+  static function constructors() {
+    // eventually you would validate inputs here
+    // php-data library to provide refined "types" before stable
+    return [
+      'Dog' => Widmogrod\Functional\identity,
+      'Cat' => Widmogrod\Functional\identity,
+      'Fish' => Widmogrod\Functional\identity
+    ];
+  }
+}
+
+repl{ $dog = Pet::Dog(['fur' => 'brown']); }
+repl{ $cat = Pet::Cat(['fur' => 'tuxedo']); }
+repl{ $fish = Pet::Fish(['color' => 'gold']); }
+
+$describe = [
+  'Dog' => function($d) { return "The dog has {$d->fur} fur"; },
+  'Cat' => function($c) { return "The cat has {$c->fur} fur"; },
+  'Fish' => function($f) { return "The fish has {$f->color} scales"; }
+];
+
+repl{ $dog->fold($describe); }
+repl{ $cat->fold($describe); }
+repl{ $fish->fold($describe); }
+
+class Tree extends Data\Data {
+  static function constructors() {
+    return [
+      'Branch' => Widmogrod\Functional\identity,
+      'Leaf' => Widmogrod\Functional\identity
+    ];
+  }
+}
+
+$t = Tree::Branch(
+  ['l' => Tree::Leaf(['value' => 1]), 
+   'r' => Tree::Branch([
+      'l' => Tree::Leaf(['value' => 2]),
+      'r' => Tree::Branch([
+        'l' => Tree::Leaf(['value' => 3]),
+        'r' => Tree::Leaf(['value' => 4])])
+    ])]);
+
+repl{ (string)$t; }
+repl{ $t->lens()->view(['r', 'l'])->value; }
+repl{ (string)$t->lens()->set(['r', 'r', 'l', 'value'], 5); }
+repl{ (string)$t->lens()->modify(['r', 'r', 'r', 'value'], function($i) { return $i + 3; }); }
+phuph```
+
+OK all set
